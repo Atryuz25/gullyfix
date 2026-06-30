@@ -24,7 +24,8 @@ export function IssueCard({ issue }: { issue: Issue }) {
     headerStyle = { background: "var(--terracotta)" };
   }
 
-  const title = issue.aiReasoning?.split(".")[0] || `${issue.category.replace("_", " ")} issue`;
+  const safeCategory = issue.category || "uncategorized";
+  const title = issue.aiReasoning?.split(".")[0] || `${safeCategory.replace("_", " ")} issue`;
   const hasVerified = issue.verifiedBy?.includes(user?.uid || "");
   const isOwner = user?.uid === issue.reportedBy;
   const canVerify = user && !isOwner && !hasVerified && !["resolved", "merged"].includes(issue.status);
@@ -54,11 +55,11 @@ export function IssueCard({ issue }: { issue: Issue }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "var(--orange-light)", color: "var(--orange)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", border: "1px solid rgba(255, 91, 35, 0.2)" }}>
-              <i className={`ti ${getCategoryIcon(issue.category)}`} />
+              <i className={`ti ${getCategoryIcon(safeCategory)}`} />
             </div>
             <div>
               <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "14px", color: "var(--text-primary)", textTransform: "capitalize", lineHeight: 1.2 }}>
-                {issue.category.replace("_", " ")}
+                {safeCategory.replace("_", " ")}
               </div>
               <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>
                 {issue.ward} · {formatTimeAgo(issue.createdAt)}
