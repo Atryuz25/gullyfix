@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView, useMotionValue, animate } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 // ─── Reusable Components ────────────────────────────────────────────────────────
@@ -75,7 +75,7 @@ const AuthButton = ({ className, text = "Sign in with Google", ghost = false }: 
     try {
       setLoading(true);
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (err: any) {
       console.error(err);
       showToast({ type: "error", message: err.message || "Failed to login" });
