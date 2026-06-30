@@ -294,7 +294,7 @@ export default function AdminLedgerPage() {
                         <div>
                           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                             <Link href={`/issue/${issue.id}`} style={{ fontWeight: 600, fontSize: "13px", color: "var(--text-primary)" }}>
-                              {issue.category.replace("_", " ")}
+                              {(issue.category || "unknown").replace("_", " ")}
                             </Link>
                             {issue.slaBreached && <span className="badge badge-red" style={{ fontSize: "9px", padding: "1px 6px" }}>SLA</span>}
                             {issue.status === "disputed" && <span className="badge badge-red" style={{ fontSize: "9px", padding: "1px 6px" }}>DISPUTED</span>}
