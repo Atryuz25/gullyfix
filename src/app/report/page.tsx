@@ -185,9 +185,36 @@ export default function ReportPage() {
             photoURL: downloadURL,
             description: description.trim(),
             userReportedType,
+            ward: ward,
+            city: city,
           },
         }),
-      }).catch(console.error);
+      }).then(async (res) => {
+        if (!res.ok) throw new Error("Triage API returned " + res.status);
+        const data = await res.json();
+        if (data.success && data.triageResult) {
+          const { isMerge, mergeTargetId, slaDays, ...rest } = data.triageResult;
+          const { doc, updateDoc, increment } = await import("firebase/firestore");
+          
+          if (isMerge && mergeTargetId) {
+            updateDoc(doc(db, "issues", mergeTargetId), { verifyCount: increment(1) });
+            updateDoc(doc(db, "issues", docRef.id), { ...rest, mergedIntoId: mergeTargetId });
+          } else {
+            const slaDeadline = new Date(Date.now() + (slaDays || 7) * 24 * 60 * 60 * 1000);
+            updateDoc(doc(db, "issues", docRef.id), { ...rest, slaDeadline });
+          }
+        }
+      }).catch(err => {
+        console.error("Triage failed from frontend", err);
+        import("firebase/firestore").then(({ doc, updateDoc }) => {
+          updateDoc(doc(db, "issues", docRef.id), {
+            status: "open",
+            category: "uncategorized",
+            priorityScore: 50,
+            aiReasoning: "Automatic triage failed. Issue queued for manual review.",
+          });
+        });
+      });
 
       router.push(`/report/trace?id=${docRef.id}`);
     } catch (error) {

@@ -187,20 +187,14 @@ export async function POST(req: Request) {
     const userDescription = sanitizeText(data.description || "", 500);
     const ward = data.ward || "";
     const city = data.city || "Mumbai";
-
     const userReportedType = data.userReportedType || null;
 
     const visionLabels = await runCloudVision(photoURL);
     
+    // Skip nearby issues for now to avoid adminDb dependency
     let nearbyIssues: any[] = [];
-    try {
-      nearbyIssues = await getProximateIssues(lat, lng, issueId);
-    } catch (err) {
-      console.error("[triage] getProximateIssues failed:", err);
-    }
     
     let agent;
-    
     if (visionLabels.includes("SAFE_SEARCH_FLAGGED")) {
       agent = {
         decision: "new",
@@ -271,21 +265,20 @@ export async function POST(req: Request) {
 
     const finalPriority = Math.min(99, adjustedPriority + corridorResult.priorityBoost);
 
-    const batch = adminDb.batch();
-
+    // Return the payload back to the client to do the update
+    let updatePayload: any = {};
     if (agent.decision === "merge" && agent.mergeTargetId) {
-      const targetRef = adminDb.collection("issues").doc(agent.mergeTargetId);
-      batch.update(targetRef, { verifyCount: FieldValue.increment(1) });
-      batch.update(adminDb.collection("issues").doc(issueId), {
+      updatePayload = {
+        isMerge: true,
+        mergeTargetId: agent.mergeTargetId,
         status: "merged",
-        mergedIntoId: agent.mergeTargetId,
         category: agent.category || "uncategorized",
         aiConfidence: agent.aiConfidence || 0,
         priorityScore: agent.priorityScore || 0,
         aiReasoning: agent.aiReasoning,
         visionLabels,
         photoAltText: agent.photoAltText,
-      });
+      };
     } else {
       let slaDays = 7;
       if (agent.category === "road_damage") slaDays = 7;
@@ -295,9 +288,8 @@ export async function POST(req: Request) {
       
       slaDays = slaDays * corridorResult.slaMultiplier;
       
-      const slaDeadline = Timestamp.fromDate(new Date(Date.now() + slaDays * 24 * 60 * 60 * 1000));
-
-      batch.update(adminDb.collection("issues").doc(issueId), {
+      updatePayload = {
+        isMerge: false,
         status: "open",
         category: agent.category,
         priorityScore: finalPriority,
@@ -308,42 +300,28 @@ export async function POST(req: Request) {
         visionLabels,
         photoAltText: agent.photoAltText,
         mergedIntoId: null,
-        slaDeadline,
+        slaDays: slaDays, // Client will compute Timestamp
         slaBreached: false,
         escalationLevel: 0,
         jurisdictionDisputed: false,
         
-        // Equity Engine
         equityMultiplier: equityData.multiplier,
         equityTier: equityData.tier,
         equityLabel: equityData.label,
         basePriority: basePriority,
         equityTrace: equityTrace,
 
-        // Corridor Multiplexer
         corridorDetected: corridorResult.detected,
         corridorPlaceName: corridorResult.placeName,
         corridorPlaceType: corridorResult.placeType,
         corridorDistanceMeters: corridorResult.distanceMeters,
         slaMultiplier: corridorResult.slaMultiplier,
-      });
+      };
     }
 
-    await batch.commit();
-    return NextResponse.json({ success: true });
-
+    return NextResponse.json({ success: true, triageResult: updatePayload });
   } catch (err: any) {
     console.error("[triage API] Error:", err);
-    try {
-      // We already parsed the body earlier, so we can't req.clone().json() again.
-      // But if body failed to parse initially, we wouldn't have issueId.
-      // We will try to parse it again if it failed, but since we know it didn't fail earlier,
-      // we can't reliably read req body here. The frontend should handle it.
-      // However, if we know issueId was in the payload, we could technically just pass it along
-      // but let's just log the failure.
-    } catch (e) {
-      console.error("[triage API] Fallback update failed", e);
-    }
     return NextResponse.json({ error: "Triage pipeline encountered an error." }, { status: 500 });
   }
 }
