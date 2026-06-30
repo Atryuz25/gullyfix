@@ -136,6 +136,20 @@ export default function AdminLedgerPage() {
     }
   };
 
+  const handleDeleteIssue = async (issueId: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this issue?")) return;
+    try {
+      setUpdating(issueId);
+      await import("firebase/firestore").then(m => m.deleteDoc(doc(db, "issues", issueId)));
+      setIssues(issues.filter(i => i.id !== issueId));
+      showToast({ type: "success", message: "Issue permanently deleted." });
+    } catch (error: any) {
+      showToast({ type: "error", message: "Failed to delete: " + error.message });
+    } finally {
+      setUpdating(null);
+    }
+  };
+
   const flaggedIssues = issues.filter(i => i.status === "pending_review");
   const otherIssues = issues.filter(i => i.status !== "pending_review");
   const disputedCount = issues.filter(i => i.status === "disputed").length;
@@ -204,7 +218,7 @@ export default function AdminLedgerPage() {
                   </div>
                   <div style={{ display: "flex", gap: "6px" }}>
                     <button className="btn btn-secondary btn-sm" onClick={() => handleUpdateStatus(issue.id, "open")}>Restore</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => showToast({ type: "warning", message: "Removal not implemented in demo" })}>Remove</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDeleteIssue(issue.id)}>Remove</button>
                   </div>
                 </motion.div>
               ))}
@@ -352,8 +366,8 @@ export default function AdminLedgerPage() {
                             } else if (val === "restore_quarantine") {
                               updateDoc(doc(db, "issues", issue.id), { quarantineStatus: "cleared" })
                                 .then(() => fetchIssues());
-                            } else if (val === "remove_quarantine") {
-                              showToast({ type: "warning", message: "Removal not implemented in demo" });
+                            } else if (val === "delete_issue") {
+                              handleDeleteIssue(issue.id);
                             } else {
                               setConfirmingId(issue.id);
                               setPendingStatus(val);
@@ -366,10 +380,10 @@ export default function AdminLedgerPage() {
                           <option value="pending_verification">Pending Verification</option>
                           <option value="disputed">Disputed</option>
                           <option value="reject_jurisdiction">Reject (Jurisdiction)</option>
+                          <option value="delete_issue">Delete Issue</option>
                           {issue.quarantineStatus === "flagged" && (
                             <>
                               <option value="restore_quarantine">Restore (Clear Flag)</option>
-                              <option value="remove_quarantine">Remove Issue</option>
                             </>
                           )}
                         </motion.select>
