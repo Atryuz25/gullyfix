@@ -76,15 +76,26 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
     if (!user || !issue) return router.push("/login");
     try {
       setVerifying(true);
-      const res = await fetch("/api/award-xp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify_issue", userId: user.uid, issueId: issue.id })
+      const { doc, updateDoc, increment, arrayUnion } = await import("firebase/firestore");
+      
+      const issueRef = doc(db, "issues", issue.id);
+      await updateDoc(issueRef, {
+        verifyCount: increment(1),
+        verifiedBy: arrayUnion(user.uid)
       });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Could not verify.");
-      }
+
+      const profileRef = doc(db, "public_profiles", user.uid);
+      await updateDoc(profileRef, {
+        xpPoints: increment(10),
+        verifyCount: increment(1)
+      }).catch(err => console.error("Failed to update profile XP:", err));
+
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        xpPoints: increment(10),
+        verifyCount: increment(1)
+      }).catch(err => console.error("Failed to update user XP:", err));
+
       showToast({ type: "success", message: "Verification recorded! +10 XP", xp: 10 });
     } catch (e: any) {
       showToast({ type: "error", message: e.message || "Could not verify." });
@@ -97,15 +108,17 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
     if (!user || !issue) return;
     try {
       setFlagging(true);
-      const res = await fetch("/api/flag-issue", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.uid, issueId: issue.id, reason })
+      const { doc, updateDoc, arrayUnion, increment } = await import("firebase/firestore");
+      const issueRef = doc(db, "issues", issue.id);
+      
+      const newFlagCount = (issue.flagCount || 0) + 1;
+      await updateDoc(issueRef, {
+        flagCount: increment(1),
+        flaggedBy: arrayUnion(user.uid),
+        lastFlagReason: reason || "Not specified",
+        ...(newFlagCount >= 3 ? { status: "pending_review" } : {})
       });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Could not flag.");
-      }
+      
       showToast({ type: "warning", message: "Issue flagged for review." });
       setShowFlagModal(false);
     } catch (e: any) {
@@ -434,15 +447,8 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
               onClick={async () => {
                 if (confirm("Are you sure you want to delete this report?")) {
                   try {
-                    const res = await fetch("/api/delete-issue", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ userId: user?.uid, issueId: issue.id })
-                    });
-                    if (!res.ok) {
-                      const errorData = await res.json();
-                      throw new Error(errorData.error || "Failed to delete report.");
-                    }
+                    const { doc, deleteDoc } = await import("firebase/firestore");
+                    await deleteDoc(doc(db, "issues", issue.id));
                     showToast({ type: "success", message: "Report deleted." });
                     router.push("/profile");
                   } catch (e: any) {
