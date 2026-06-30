@@ -89,18 +89,25 @@ export default function ReportPage() {
         const data = await res.json();
         setAddress(data.address);
         
-        if (data.city) {
-          const matchedCity = Object.keys(CITIES_AND_WARDS).find(c => c.toLowerCase() === data.city.toLowerCase() || data.city.toLowerCase().includes(c.toLowerCase()));
-          if (matchedCity) {
-            setCity(matchedCity);
-            if (data.neighborhood) {
-              const wards = CITIES_AND_WARDS[matchedCity];
-              const hash = data.neighborhood.split("").reduce((a: number, b: string) => a + b.charCodeAt(0), 0);
-              setWard(wards[hash % wards.length]);
-            } else {
-              setWard(CITIES_AND_WARDS[matchedCity][0]);
-            }
-          }
+        let matchedCity = Object.keys(CITIES_AND_WARDS).find(c => 
+          data.city && (c.toLowerCase() === data.city.toLowerCase() || data.city.toLowerCase().includes(c.toLowerCase()))
+        );
+        
+        // Demo fallback: if clicked in the middle of nowhere, just default to Mumbai
+        if (!matchedCity) {
+          matchedCity = "Mumbai";
+        }
+        
+        setCity(matchedCity);
+        const wards = CITIES_AND_WARDS[matchedCity];
+        
+        if (data.neighborhood) {
+          const hash = data.neighborhood.split("").reduce((a: number, b: string) => a + b.charCodeAt(0), 0);
+          setWard(wards[hash % wards.length]);
+        } else {
+          // Generate a pseudo-random ward based on the lat/lng coordinates
+          const hash = Math.floor(Math.abs(location.lat * location.lng * 10000));
+          setWard(wards[hash % wards.length]);
         }
       } catch (err) {
         console.error("Geocode failed:", err);
