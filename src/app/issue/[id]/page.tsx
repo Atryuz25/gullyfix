@@ -444,16 +444,26 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
             <button
               className="btn btn-ghost btn-sm"
               style={{ color: "var(--red)", flex: 1, minWidth: "100%" }}
-              onClick={async () => {
-                if (confirm("Are you sure you want to delete this report?")) {
+              onClick={async (e) => {
+                const btn = e.currentTarget;
+                if (btn.innerText.includes("Are you sure?")) {
                   try {
+                    btn.innerText = "Deleting...";
                     const { doc, deleteDoc } = await import("firebase/firestore");
                     await deleteDoc(doc(db, "issues", issue.id));
                     showToast({ type: "success", message: "Report deleted." });
                     router.push("/profile");
-                  } catch (e: any) {
-                    showToast({ type: "error", message: e.message || "Failed to delete report." });
+                  } catch (err: any) {
+                    showToast({ type: "error", message: err.message || "Failed to delete report." });
+                    btn.innerHTML = '<i class="ti ti-trash"></i> Delete Report';
                   }
+                } else {
+                  btn.innerText = "Are you sure? Click again to delete.";
+                  setTimeout(() => {
+                    if (btn && btn.innerText.includes("Are you sure?")) {
+                      btn.innerHTML = '<i class="ti ti-trash"></i> Delete Report';
+                    }
+                  }, 3000);
                 }
               }}
             >
