@@ -1,0 +1,384 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FDF6ED;
+  --cream-dark:#F5EAD8;
+  --brown-deep:#2C1A0E;
+  --brown-mid:#6B3F1F;
+  --terracotta:#C4522A;
+  --terra-light:#F0CABB;
+  --amber:#E8A020;
+  --amber-light:#FBE9B8;
+  --sage:#4A7C59;
+  --sage-light:#C8DFCE;
+  --sky:#3D7EC8;
+  --sky-light:#C5DEFF;
+  --red-issue:#D94F3D;
+  --red-light:#FCDBD7;
+  --pixel-border: 3px solid var(--brown-deep);
+}
+body{background:var(--cream);font-family:'DM Sans',system-ui;color:var(--brown-deep)}
+
+.section{margin-bottom:2.5rem}
+.section-label{font-family:'DM Sans',system-ui;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--brown-mid);margin-bottom:1rem;opacity:.7}
+
+/* COLOUR SWATCHES */
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{border-radius:8px;overflow:hidden;width:80px}
+.swatch-block{height:52px;border:1.5px solid rgba(0,0,0,.1)}
+.swatch-name{font-size:10px;padding:4px 2px;text-align:center;color:var(--brown-deep);opacity:.7;line-height:1.3}
+
+/* TYPE SPECIMENS */
+.type-display{font-family:'Syne',system-ui;font-weight:800;font-size:36px;line-height:1;color:var(--brown-deep);letter-spacing:-.02em}
+.type-heading{font-family:'Syne',system-ui;font-weight:700;font-size:22px;color:var(--brown-deep)}
+.type-body{font-family:'DM Sans',system-ui;font-size:15px;line-height:1.6;color:var(--brown-mid)}
+.type-label{font-family:'DM Sans',system-ui;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--brown-mid)}
+.type-mono{font-family:'DM Mono',monospace;font-size:13px;color:var(--terracotta)}
+
+/* PIXEL CARD — the signature component */
+.pixel-card{
+  background:var(--cream-dark);
+  border:3px solid var(--brown-deep);
+  border-radius:0;
+  box-shadow:4px 4px 0 var(--brown-deep);
+  padding:1rem 1.25rem;
+}
+.pixel-card-accent{
+  background:var(--terra-light);
+  border:3px solid var(--brown-deep);
+  border-radius:0;
+  box-shadow:4px 4px 0 var(--brown-deep);
+  padding:1rem 1.25rem;
+}
+.pixel-card-sage{
+  background:var(--sage-light);
+  border:3px solid var(--brown-deep);
+  border-radius:0;
+  box-shadow:4px 4px 0 var(--brown-deep);
+  padding:1rem 1.25rem;
+}
+.pixel-card-sky{
+  background:var(--sky-light);
+  border:3px solid var(--brown-deep);
+  border-radius:0;
+  box-shadow:4px 4px 0 var(--brown-deep);
+  padding:1rem 1.25rem;
+}
+
+/* BUTTONS */
+.btn-primary{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--terracotta);color:#fff;
+  border:2.5px solid var(--brown-deep);
+  box-shadow:3px 3px 0 var(--brown-deep);
+  font-family:'DM Sans',system-ui;font-weight:500;font-size:13px;
+  padding:8px 16px;cursor:pointer;letter-spacing:.02em;
+  transition:transform .08s,box-shadow .08s;
+}
+.btn-primary:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--brown-deep)}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--cream);color:var(--brown-deep);
+  border:2.5px solid var(--brown-deep);
+  box-shadow:3px 3px 0 var(--brown-deep);
+  font-family:'DM Sans',system-ui;font-weight:500;font-size:13px;
+  padding:8px 16px;cursor:pointer;
+  transition:transform .08s,box-shadow .08s;
+}
+.btn-secondary:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--brown-deep)}
+.btn-danger{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--red-issue);color:#fff;
+  border:2.5px solid var(--brown-deep);
+  box-shadow:3px 3px 0 var(--brown-deep);
+  font-family:'DM Sans',system-ui;font-weight:500;font-size:13px;
+  padding:8px 16px;cursor:pointer;
+}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 10px;border:2px solid var(--brown-deep);letter-spacing:.03em}
+.badge-terra{background:var(--terracotta);color:#fff}
+.badge-sage{background:var(--sage);color:#fff}
+.badge-amber{background:var(--amber);color:var(--brown-deep)}
+.badge-red{background:var(--red-issue);color:#fff}
+.badge-sky{background:var(--sky);color:#fff}
+.badge-ghost{background:transparent;color:var(--brown-deep)}
+
+/* XP BAR */
+.xp-bar-track{height:12px;background:var(--cream-dark);border:2px solid var(--brown-deep);position:relative;overflow:hidden}
+.xp-bar-fill{height:100%;background:var(--amber);transition:width .4s}
+.xp-bar-fill-sage{height:100%;background:var(--sage)}
+
+/* ISSUE PIN */
+.issue-pin{width:36px;height:36px;border:2.5px solid var(--brown-deep);box-shadow:2px 2px 0 var(--brown-deep);display:flex;align-items:center;justify-content:center;font-size:18px}
+.pin-road{background:var(--terra-light)}
+.pin-water{background:var(--sky-light)}
+.pin-waste{background:var(--sage-light)}
+.pin-light{background:var(--amber-light)}
+
+/* STAT CHIP */
+.stat-chip{display:flex;flex-direction:column;align-items:center;background:var(--cream-dark);border:2px solid var(--brown-deep);box-shadow:2px 2px 0 var(--brown-deep);padding:.75rem 1rem;min-width:80px}
+.stat-num{font-family:'Syne',system-ui;font-weight:800;font-size:24px;line-height:1;color:var(--brown-deep)}
+.stat-label{font-size:10px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--brown-mid);margin-top:3px;text-align:center}
+
+/* PRIORITY BAR */
+.priority-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--brown-mid)}
+.priority-fill-high{height:8px;border:2px solid var(--brown-deep);background:var(--red-issue)}
+.priority-fill-med{height:8px;border:2px solid var(--brown-deep);background:var(--amber)}
+.priority-fill-low{height:8px;border:2px solid var(--brown-deep);background:var(--sage)}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* DIVIDER */
+.divider{height:2px;background:var(--brown-deep);opacity:.12;margin:1.5rem 0}
+
+/* GAME HEADER MOCKUP */
+.nav-bar{background:var(--brown-deep);padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--brown-deep)}
+.nav-logo{font-family:'Syne',system-ui;font-weight:800;font-size:18px;color:var(--cream);letter-spacing:.02em}
+.nav-logo span{color:var(--amber)}
+.nav-pill{background:var(--terracotta);color:#fff;font-size:11px;font-weight:500;padding:4px 12px;border:2px solid var(--terra-light);letter-spacing:.04em}
+
+/* ISSUE CARD SPECIMEN */
+.issue-card{background:var(--cream-dark);border:2.5px solid var(--brown-deep);box-shadow:3px 3px 0 var(--brown-deep)}
+.issue-card-header{background:var(--terracotta);padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.issue-card-body{padding:.875rem 1rem}
+
+/* MAP PIN CLUSTER */
+.pin-cluster{position:relative;width:44px;height:44px}
+.pin-body{width:32px;height:32px;border:3px solid var(--brown-deep);box-shadow:2px 2px 0 var(--brown-deep);display:flex;align-items:center;justify-content:center;font-size:14px}
+.pin-tail{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:10px solid var(--brown-deep);margin-left:6px}
+</style>
+
+<h2 class="sr-only">GullyFix design system — colour palette, typography, components</h2>
+
+<div class="nav-bar">
+  <span class="nav-logo">Gully<span>Fix</span></span>
+  <div class="row" style="gap:8px">
+    <span class="nav-pill">Ward 3 — Active</span>
+    <span style="color:var(--amber);font-family:'Syne',sans-serif;font-weight:700;font-size:13px">⭐ 450 XP</span>
+  </div>
+</div>
+
+<div style="padding:1.5rem">
+
+<div class="section">
+  <div class="section-label">Colour palette</div>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-block" style="background:#FDF6ED"></div>
+      <div class="swatch-name">Cream<br>#FDF6ED</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#F5EAD8"></div>
+      <div class="swatch-name">Cream dark<br>#F5EAD8</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#2C1A0E"></div>
+      <div class="swatch-name">Brown deep<br>#2C1A0E</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#C4522A"></div>
+      <div class="swatch-name">Terracotta<br>#C4522A</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#E8A020"></div>
+      <div class="swatch-name">Amber<br>#E8A020</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#4A7C59"></div>
+      <div class="swatch-name">Sage<br>#4A7C59</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#3D7EC8"></div>
+      <div class="swatch-name">Sky blue<br>#3D7EC8</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#D94F3D"></div>
+      <div class="swatch-name">Alert red<br>#D94F3D</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Typography</div>
+  <div style="margin-bottom:1rem"><div class="type-display">Fix your gully.</div><div class="type-label" style="margin-top:4px">Syne 800 — hero headings, screen titles</div></div>
+  <div style="margin-bottom:1rem"><div class="type-heading">Ward 3 — Gandhipuram</div><div class="type-label" style="margin-top:4px">Syne 700 — section headings, card titles</div></div>
+  <div style="margin-bottom:1rem"><div class="type-body">Report a pothole, broken streetlight, or water leak in your neighbourhood. Your report gets routed to the right department in under 10 seconds.</div><div class="type-label" style="margin-top:4px">DM Sans 400 — body, descriptions</div></div>
+  <div><span class="badge badge-ghost" style="font-family:'DM Mono',monospace;font-size:11px">PRIORITY_SCORE: 78</span><div class="type-label" style="margin-top:4px">DM Mono — AI output labels, scores, codes</div></div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Signature component — pixel card</div>
+  <div class="grid-2">
+    <div class="pixel-card">
+      <div class="type-label" style="margin-bottom:6px">Default card</div>
+      <div class="type-heading" style="font-size:16px">Pothole on MG Road</div>
+      <div class="type-body" style="font-size:13px;margin-top:4px">Reported 2 hrs ago · Ward 3</div>
+    </div>
+    <div class="pixel-card-accent">
+      <div class="type-label" style="margin-bottom:6px">Terracotta card — high priority</div>
+      <div class="type-heading" style="font-size:16px">Water leakage</div>
+      <div class="type-body" style="font-size:13px;margin-top:4px">Priority 82/100 · Roads dept</div>
+    </div>
+    <div class="pixel-card-sage">
+      <div class="type-label" style="margin-bottom:6px">Sage card — resolved</div>
+      <div class="type-heading" style="font-size:16px">Broken streetlight</div>
+      <div class="type-body" style="font-size:13px;margin-top:4px">Resolved in 4.2 days</div>
+    </div>
+    <div class="pixel-card-sky">
+      <div class="type-label" style="margin-bottom:6px">Sky card — info / prediction</div>
+      <div class="type-heading" style="font-size:16px">AI hotspot alert</div>
+      <div class="type-body" style="font-size:13px;margin-top:4px">78% drainage failure risk</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Buttons</div>
+  <div class="row">
+    <button class="btn-primary">Report issue</button>
+    <button class="btn-secondary">View on map</button>
+    <button class="btn-danger">Flag report</button>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Badges — status, category, priority</div>
+  <div class="row">
+    <span class="badge badge-red">High priority</span>
+    <span class="badge badge-amber">Medium</span>
+    <span class="badge badge-sage">Resolved</span>
+    <span class="badge badge-terra">Road damage</span>
+    <span class="badge badge-sky">Water</span>
+    <span class="badge badge-ghost">Pending</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">XP and progress bars</div>
+  <div style="margin-bottom:.75rem">
+    <div class="row" style="margin-bottom:6px">
+      <span class="type-label">Level 4 — Ward Hero</span>
+      <span class="type-label" style="margin-left:auto">450 / 600 XP</span>
+    </div>
+    <div class="xp-bar-track"><div class="xp-bar-fill" style="width:75%"></div></div>
+  </div>
+  <div>
+    <div class="row" style="margin-bottom:6px">
+      <span class="type-label">Ward 3 health score</span>
+      <span class="type-label" style="margin-left:auto">68 / 100</span>
+    </div>
+    <div class="xp-bar-track"><div class="xp-bar-fill-sage" style="width:68%"></div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Issue category map pins</div>
+  <div class="row">
+    <div style="text-align:center">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="pin-body" style="background:#F0CABB">🕳️</div>
+        <div class="pin-tail"></div>
+      </div>
+      <div class="type-label" style="margin-top:4px">Road</div>
+    </div>
+    <div style="text-align:center">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="pin-body" style="background:#C5DEFF">💧</div>
+        <div class="pin-tail"></div>
+      </div>
+      <div class="type-label" style="margin-top:4px">Water</div>
+    </div>
+    <div style="text-align:center">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="pin-body" style="background:#C8DFCE">🗑️</div>
+        <div class="pin-tail"></div>
+      </div>
+      <div class="type-label" style="margin-top:4px">Waste</div>
+    </div>
+    <div style="text-align:center">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="pin-body" style="background:#FBE9B8">💡</div>
+        <div class="pin-tail"></div>
+      </div>
+      <div class="type-label" style="margin-top:4px">Streetlight</div>
+    </div>
+    <div style="text-align:center">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="pin-body" style="background:#EF9F27;animation:pulse 1.5s infinite">⚠️</div>
+        <div class="pin-tail"></div>
+      </div>
+      <div class="type-label" style="margin-top:4px">AI hotspot</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Stat chips — dashboard metrics</div>
+  <div class="grid-4">
+    <div class="stat-chip"><span class="stat-num">47</span><span class="stat-label">Resolved this month</span></div>
+    <div class="stat-chip"><span class="stat-num" style="color:var(--terracotta)">6.2</span><span class="stat-label">Avg days to fix</span></div>
+    <div class="stat-chip"><span class="stat-num" style="color:var(--sage)">68</span><span class="stat-label">Ward health</span></div>
+    <div class="stat-chip"><span class="stat-num" style="color:var(--amber)">450</span><span class="stat-label">Your XP</span></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Issue card — full specimen</div>
+  <div class="issue-card">
+    <div class="issue-card-header">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:18px">🕳️</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#fff">Road damage</span>
+      </div>
+      <span class="badge badge-red" style="border-color:rgba(255,255,255,.4)">Priority 78</span>
+    </div>
+    <div class="issue-card-body">
+      <div class="type-heading" style="font-size:15px;margin-bottom:4px">Large pothole near Town Hall signal</div>
+      <div class="type-body" style="font-size:12px;margin-bottom:.875rem">Ward 3 · Gandhipuram · Reported 2 hrs ago</div>
+      <div style="display:flex;gap:8px;margin-bottom:.875rem">
+        <span class="badge badge-terra" style="font-size:10px">Roads dept</span>
+        <span class="badge badge-ghost" style="font-size:10px">3 verified</span>
+      </div>
+      <div class="priority-row" style="margin-bottom:6px">
+        <span style="min-width:52px">Priority</span>
+        <div style="flex:1;background:var(--cream-dark);border:2px solid var(--brown-deep);height:8px">
+          <div style="width:78%;height:100%;background:var(--red-issue)"></div>
+        </div>
+        <span>78/100</span>
+      </div>
+      <div class="row" style="margin-top:.875rem">
+        <button class="btn-secondary" style="font-size:12px;padding:6px 12px">I've seen this too</button>
+        <button class="btn-primary" style="font-size:12px;padding:6px 12px">View details</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<style>
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+</style>

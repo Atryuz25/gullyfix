@@ -1,0 +1,402 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FDF6ED;--cream-dark:#F5EAD8;--brown:#2C1A0E;--brown-mid:#6B3F1F;
+  --terra:#C4522A;--terra-light:#F0CABB;--amber:#E8A020;--amber-light:#FBE9B8;
+  --sage:#4A7C59;--sage-light:#C8DFCE;--sky:#3D7EC8;--sky-light:#C5DEFF;
+  --red:#D94F3D;--red-light:#FCDBD7;
+}
+body{background:var(--cream);font-family:'DM Sans',system-ui;color:var(--brown)}
+.syne{font-family:'Syne',system-ui}
+
+/* NAV */
+.topnav{background:var(--brown);padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.logo{font-family:'Syne',system-ui;font-weight:800;font-size:17px;color:var(--cream)}
+.logo span{color:var(--amber)}
+
+/* FLOW TABS */
+.tabs{display:flex;gap:0;margin-bottom:1.5rem;border:2.5px solid var(--brown)}
+.tab{flex:1;padding:.5rem;text-align:center;font-size:12px;font-weight:500;color:var(--brown-mid);cursor:pointer;border-right:2px solid var(--brown);background:var(--cream-dark)}
+.tab:last-child{border-right:none}
+.tab.active{background:var(--brown);color:var(--cream);font-family:'Syne',system-ui}
+
+/* SCREEN CARD */
+.screen-card{background:var(--cream-dark);border:2.5px solid var(--brown);box-shadow:4px 4px 0 var(--brown);margin-bottom:1.25rem;overflow:hidden}
+.screen-header{padding:.75rem 1rem;border-bottom:2px solid var(--brown);display:flex;align-items:center;gap:10px}
+.screen-id{background:var(--brown);color:var(--cream);font-family:'Syne',system-ui;font-weight:700;font-size:11px;padding:3px 10px;letter-spacing:.05em}
+.screen-title{font-family:'Syne',system-ui;font-weight:700;font-size:15px;flex:1}
+.screen-role{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border:1.5px solid var(--brown)}
+.role-citizen{background:var(--sky-light);color:var(--sky)}
+.role-admin{background:var(--terra-light);color:var(--terra)}
+.role-both{background:var(--amber-light);color:var(--brown-mid)}
+.screen-body{padding:1rem}
+
+/* COMPONENT LIST */
+.comp-section{margin-bottom:.875rem}
+.comp-label{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--brown-mid);margin-bottom:.4rem;opacity:.8}
+.comp-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:.35rem}
+.comp-dot{width:6px;height:6px;border-radius:50%;background:var(--brown);margin-top:5px;flex-shrink:0}
+.comp-dot-terra{background:var(--terra)}
+.comp-dot-sage{background:var(--sage)}
+.comp-dot-sky{background:var(--sky)}
+.comp-dot-amber{background:var(--amber)}
+.comp-text{font-size:12.5px;color:var(--brown-mid);line-height:1.5}
+.comp-text strong{color:var(--brown);font-weight:500}
+
+/* FLOW ARROW */
+.flow-row{display:flex;align-items:center;gap:0;margin-bottom:1rem;flex-wrap:wrap}
+.flow-node{background:var(--cream-dark);border:2px solid var(--brown);box-shadow:2px 2px 0 var(--brown);padding:5px 10px;font-size:11px;font-weight:500;white-space:nowrap}
+.flow-node-active{background:var(--terra);color:#fff;border:2px solid var(--brown);box-shadow:2px 2px 0 var(--brown);padding:5px 10px;font-size:11px;font-weight:500}
+.flow-node-admin{background:var(--amber-light);border:2px solid var(--brown);box-shadow:2px 2px 0 var(--brown);padding:5px 10px;font-size:11px;font-weight:500}
+.flow-arrow{font-size:14px;color:var(--brown-mid);padding:0 4px}
+
+/* BADGE */
+.badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border:1.5px solid var(--brown);letter-spacing:.03em}
+.b-terra{background:var(--terra);color:#fff}
+.b-sage{background:var(--sage);color:#fff}
+.b-amber{background:var(--amber);color:var(--brown)}
+.b-sky{background:var(--sky);color:#fff}
+.b-red{background:var(--red);color:#fff}
+.b-ghost{background:transparent;color:var(--brown)}
+
+.divider{height:1.5px;background:var(--brown);opacity:.1;margin:1rem 0}
+.section-title{font-family:'Syne',system-ui;font-weight:800;font-size:18px;margin-bottom:1rem;color:var(--brown)}
+</style>
+
+<h2 class="sr-only">GullyFix — complete screen architecture and component spec</h2>
+
+<div class="topnav">
+  <span class="logo">Gully<span>Fix</span> — Screen Architecture</span>
+  <span style="font-size:11px;color:var(--cream);opacity:.6">12 screens · 3 user roles</span>
+</div>
+
+<div style="padding:0 1rem 1.5rem">
+
+<!-- USER FLOW -->
+<div class="section-title">User flow</div>
+<div class="flow-row">
+  <div class="flow-node">Login (SCR-01)</div><div class="flow-arrow">→</div>
+  <div class="flow-node-active">Map (SCR-00)</div><div class="flow-arrow">→</div>
+  <div class="flow-node">Report (SCR-02–04)</div><div class="flow-arrow">→</div>
+  <div class="flow-node">AI trace (SCR-05)</div><div class="flow-arrow">→</div>
+  <div class="flow-node">Confirm (SCR-06)</div>
+</div>
+<div class="flow-row">
+  <div class="flow-node">Map (SCR-00)</div><div class="flow-arrow">→</div>
+  <div class="flow-node">Issue detail (SCR-07)</div><div class="flow-arrow">→</div>
+  <div class="flow-node">Verify / flag</div>
+</div>
+<div class="flow-row">
+  <div class="flow-node">Profile (SCR-08)</div><div class="flow-arrow">→</div>
+  <div class="flow-node">Leaderboard (SCR-09)</div>
+  <div class="flow-arrow" style="margin-left:1rem">Admin:</div>
+  <div class="flow-node-admin">Dashboard (SCR-10)</div><div class="flow-arrow">→</div>
+  <div class="flow-node-admin">Issue ledger (SCR-11)</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SCR-00 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-00</span>
+    <span class="screen-title">Map dashboard — hero screen</span>
+    <span class="screen-role role-both">All users</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Top navbar</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>GullyFix logo</strong> left — Syne 800, cream on brown</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Ward selector pill</strong> — "Ward 3 · Gandhipuram" dropdown, amber border</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>XP chip</strong> right — "⭐ 450 XP" amber badge, links to SCR-08</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Profile avatar</strong> — initials circle, links to SCR-08</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Stat strip — below nav, full width</div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text"><strong>4 stat chips</strong> in a row: "47 resolved" · "6.2 avg days" · "68 ward health" · "128 total open" — cream-dark bg, brown pixel border</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Map controls bar</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Layer toggles</strong> — 3 pill buttons: "Live issues" (default on) · "Heatmap" · "AI predictions" — pixel border style</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Category filter</strong> — icon buttons for Road / Water / Waste / Light / All</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Map canvas (Leaflet + OpenStreetMap)</div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text"><strong>Issue pins</strong> — square pixel pins, emoji icon + category color (terracotta/sky/sage/amber). Hard brown border.</div></div>
+      <div class="comp-row"><div class="comp-dot-amber comp-dot"></div><div class="comp-text"><strong>Heatmap layer</strong> — Leaflet.heat, amber/terracotta color ramp. Toggle shows density clusters.</div></div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text"><strong>Prediction pins</strong> — sky-blue square with pulsing CSS border animation. Shows on toggle.</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Pin click</strong> → opens bottom sheet (SCR-07 condensed) without leaving map</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">FAB — floating action button</div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text"><strong>"+ Report issue"</strong> — terracotta, bottom-right, Syne font, pixel shadow. Tapping goes to SCR-02.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Bottom sheet — on pin tap</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">Issue thumbnail photo · category badge · priority bar · verify count · "View full detail" button → SCR-07</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCR-01 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-01</span>
+    <span class="screen-title">Login / onboarding</span>
+    <span class="screen-role role-both">All users</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Layout</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Full-screen cream bg</strong> with illustrated pixel-art city skyline as decorative footer strip (SVG, browns and terracotta)</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Center card</strong> — pixel card style, max-width 420px</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Card content</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Logo + tagline</strong> — "GullyFix" Syne 800, "Fix your city. Earn your stripes." DM Sans below</div></div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text"><strong>Google Sign-In button</strong> — primary btn style, Google icon left, "Continue with Google"</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Ward selector</strong> — shown after auth, dropdown "Which ward do you live in?" — sets users.wardId</div></div>
+      <div class="comp-row"><div class="comp-dot-amber comp-dot"></div><div class="comp-text"><strong>XP explainer strip</strong> — "Report = +20 XP · Verify = +10 XP · Resolved = +50 XP" — amber-light bg</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCR-02, 03, 04 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-02 → 04</span>
+    <span class="screen-title">Report flow — 3-step wizard</span>
+    <span class="screen-role role-citizen">Citizen</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Step indicator (all 3 screens)</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">3 square step nodes connected by lines — active = terracotta fill, done = sage fill, upcoming = cream. Pixel border style.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">SCR-02 — Photo capture</div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text"><strong>Upload zone</strong> — large dashed pixel border square, "📸 Take a photo or upload" — tapping opens camera/file</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Preview</strong> — once selected, image fills the zone with a sage "✓ Photo ready" badge overlaid</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Optional description</strong> — textarea, max 500 chars, "Describe what you see (optional)"</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>"Next →" button</strong> — terracotta primary, disabled until photo selected</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">SCR-03 — Location</div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text"><strong>Mini Leaflet map</strong> — shows user's GPS pin, draggable if permission denied</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Address display</strong> — reverse geocoded address below map in pixel card</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>"Use my location" button</strong> — secondary style, triggers geolocation API</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>"Next →" button</strong> — disabled until location confirmed</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">SCR-04 — Review and submit</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Photo thumbnail</strong> — left column, 120px square</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Location summary</strong> — address + ward name</div></div>
+      <div class="comp-row"><div class="comp-dot-amber comp-dot"></div><div class="comp-text"><strong>XP preview chip</strong> — "You'll earn +20 XP for this report" amber badge</div></div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text"><strong>"Submit report" button</strong> — terracotta primary, full width. Triggers Firestore write + Cloud Function.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCR-05 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-05</span>
+    <span class="screen-title">AI agent trace — most important screen</span>
+    <span class="screen-role role-citizen">Citizen</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Purpose — this screen wins agentic depth scoring</div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text">Shows the 4-step triage pipeline running in real time. Polls Firestore issue doc. Each step appears sequentially as the Cloud Function progresses. Judges watch AI thinking live.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Header</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>"AI is analysing your report"</strong> — Syne 700 heading. Amber pulsing dot animation next to it while running.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Step checklist — 4 rows, animate in sequentially</div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text"><strong>Step 1</strong> — "Reading your photo" · Cloud Vision · shows top 3 labels once done e.g. "road · asphalt · damage"</div></div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text"><strong>Step 2</strong> — "Classifying issue" · Gemini · shows category + priority score + department once done</div></div>
+      <div class="comp-row"><div class="comp-dot-amber comp-dot"></div><div class="comp-text"><strong>Step 3</strong> — "Checking nearby reports" · Firestore geo-query · shows "No duplicates found" or "Merged with Issue #42"</div></div>
+      <div class="comp-row"><div class="comp-dot-sage comp-dot"></div><div class="comp-text"><strong>Step 4</strong> — "Routing to department" · shows "Roads and Infrastructure Dept — notified"</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Result card — appears after all 4 steps</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">Category badge · Priority score bar · AI reasoning text (aiReasoning field) · Resolution steps (3 bullets, Gemini-generated) · Department routed to</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">CTA</div>
+      <div class="comp-row"><div class="comp-dot-amber comp-dot"></div><div class="comp-text"><strong>"+20 XP earned!"</strong> amber badge animates in · "View on map" secondary button · "Report another" ghost button</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCR-07 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-07</span>
+    <span class="screen-title">Issue detail</span>
+    <span class="screen-role role-both">All users</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Hero</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Issue photo</strong> — full width, 200px height, object-cover. Category badge overlaid bottom-left.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Core info</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Title</strong> — AI-generated description, Syne 700</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Meta row</strong> — ward · address · reported time · reporter name</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Priority bar</strong> — labelled 0–100 with colour fill (red/amber/sage by range)</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Status badge</strong> — Open / In progress / Resolved with colour coding</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Verify count</strong> — "👥 7 people have seen this" with the verify CTA button</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">AI advisory panel — sky-light pixel card</div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text"><strong>Header</strong> — "AI recommendation for Roads dept" with Gemini logo mark</div></div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text"><strong>3 resolution steps</strong> — bulleted, from resolutionSteps[] field. This is where judges see Gemini advising.</div></div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text"><strong>AI confidence score</strong> — "92% confidence" small badge</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Citizen actions</div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text"><strong>"I've seen this too"</strong> — primary btn, triggers verifyIssue callable. Disabled if already verified or within cooldown.</div></div>
+      <div class="comp-row"><div class="comp-dot-red comp-dot" style="background:var(--red)"></div><div class="comp-text"><strong>"Flag as invalid"</strong> — ghost/danger btn, triggers flagIssue callable</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCR-08 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-08</span>
+    <span class="screen-title">Citizen profile</span>
+    <span class="screen-role role-citizen">Citizen</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Profile header — terracotta pixel card</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Avatar circle</strong> — Google photo or initials, 64px, brown border</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Display name</strong> + ward name below</div></div>
+      <div class="comp-row"><div class="comp-dot-amber comp-dot"></div><div class="comp-text"><strong>Level badge</strong> — "Level 4 · Ward Hero" amber, Syne font</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">XP progress</div>
+      <div class="comp-row"><div class="comp-dot-amber comp-dot"></div><div class="comp-text"><strong>XP bar</strong> — "450 / 600 XP to Level 5" with amber fill, pixel border track</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Stat grid</strong> — 3 chips: "12 reports" · "34 verifications" · "8 resolved"</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Badges earned</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">Badge grid — pixel-card tiles: "First report" · "5-streak" · "Ward defender" · locked badges shown greyed</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">My reports</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">Scrollable list of own issues — compact card style, status badge, tap → SCR-07</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCR-09 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-09</span>
+    <span class="screen-title">Ward leaderboard</span>
+    <span class="screen-role role-both">All users</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Header</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Ward selector tabs</strong> — Ward 1 · Ward 2 · Ward 3 etc, pixel tab style</div></div>
+      <div class="comp-row"><div class="comp-dot-amber comp-dot"></div><div class="comp-text"><strong>Top 3 podium</strong> — 1st/2nd/3rd position blocks with crown icons, avatar, XP. Syne numbers for rank.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Full rankings list</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">Ranked rows — #rank · avatar · name · XP · report count · verify count. Current user row highlighted in amber-light.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Motivation strip</div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text"><strong>"You're 80 XP away from rank #3"</strong> — personalised, terracotta pixel card at bottom</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCR-10 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-10</span>
+    <span class="screen-title">Admin control room</span>
+    <span class="screen-role role-admin">Admin only</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Top metric strip — 4 stat chips</div>
+      <div class="comp-row"><div class="comp-dot-terra comp-dot"></div><div class="comp-text">"47 resolved" · "13 in progress" · "6.2 avg days" · "128 open" — same chip style as SCR-00</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Ward health scorecard — most innovative element</div>
+      <div class="comp-row"><div class="comp-dot-sage comp-dot"></div><div class="comp-text"><strong>5 ward cards</strong> in a grid — each shows ward name, health score 0–100, sage/amber/red colour by score, Gemini reasoning snippet, issue count</div></div>
+      <div class="comp-row"><div class="comp-dot-sage comp-dot"></div><div class="comp-text">Score bar inside each card — pixel border track, sage fill</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Issues by category chart</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">Horizontal bar chart — Road · Water · Waste · Light with category colours. Simple, readable.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Recent activity feed</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">Live Firestore onSnapshot feed — "Issue #47 resolved · Ward 3 · 2 mins ago" row items with status badge</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">AI predictions panel</div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text"><strong>"Run prediction analysis" button</strong> — triggers F6 Gemini call. Shows 5 predicted hotspots in sky-light cards with confidence %, category, ward, reasoning.</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Navigation</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">"View issue ledger →" button links to SCR-11</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCR-11 -->
+<div class="screen-card">
+  <div class="screen-header">
+    <span class="screen-id">SCR-11</span>
+    <span class="screen-title">Admin issue ledger</span>
+    <span class="screen-role role-admin">Admin only</span>
+  </div>
+  <div class="screen-body">
+    <div class="comp-section">
+      <div class="comp-label">Filter bar</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>3 dropdowns</strong> — Ward · Category · Status — pixel select style. Resets Firestore query on change.</div></div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text"><strong>Sort</strong> — Priority (default) · Date · Verify count</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Issue table rows</div>
+      <div class="comp-row"><div class="comp-dot"></div><div class="comp-text">Each row: photo thumb · category badge · title · ward · priority bar · verify count · status badge · "Update status" dropdown</div></div>
+      <div class="comp-row"><div class="comp-dot-sage comp-dot"></div><div class="comp-text"><strong>Status dropdown inline</strong> — Open → In progress → Resolved. On change calls updateIssueStatus callable. Row turns sage on resolve.</div></div>
+      <div class="comp-row"><div class="comp-dot-sky comp-dot"></div><div class="comp-text">Row tap → SCR-07 issue detail with full AI advisory visible</div></div>
+    </div>
+    <div class="comp-section">
+      <div class="comp-label">Pending review queue</div>
+      <div class="comp-row"><div class="comp-dot-red comp-dot" style="background:var(--red)"></div><div class="comp-text">Flagged issues (flagCount ≥ 3) shown in a separate red-light section at top — "3 issues need review"</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COLOUR REFERENCE -->
+<div class="divider"></div>
+<div class="section-title" style="font-size:14px">Quick colour reference for Stitch</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+  <div style="padding:.5rem;background:var(--cream-dark);border:2px solid var(--brown)"><strong>Page bg</strong> #FDF6ED</div>
+  <div style="padding:.5rem;background:var(--cream-dark);border:2px solid var(--brown)"><strong>Card bg</strong> #F5EAD8</div>
+  <div style="padding:.5rem;background:var(--cream-dark);border:2px solid var(--brown)"><strong>All borders</strong> #2C1A0E · 2.5px</div>
+  <div style="padding:.5rem;background:var(--cream-dark);border:2px solid var(--brown)"><strong>Box shadow</strong> 3px 3px 0 #2C1A0E</div>
+  <div style="padding:.5rem;background:var(--terra-light);border:2px solid var(--brown)"><strong>Terracotta</strong> #C4522A — CTAs, road</div>
+  <div style="padding:.5rem;background:var(--amber-light);border:2px solid var(--brown)"><strong>Amber</strong> #E8A020 — XP, prediction</div>
+  <div style="padding:.5rem;background:var(--sage-light);border:2px solid var(--brown)"><strong>Sage</strong> #4A7C59 — resolved, safe</div>
+  <div style="padding:.5rem;background:var(--sky-light);border:2px solid var(--brown)"><strong>Sky</strong> #3D7EC8 — water, AI info</div>
+  <div style="padding:.5rem;background:var(--red-light);border:2px solid var(--brown)"><strong>Alert red</strong> #D94F3D — flags, high priority</div>
+  <div style="padding:.5rem;background:var(--brown);border:2px solid var(--brown)"><strong style="color:var(--cream)">Nav bg</strong> <span style="color:var(--cream)">#2C1A0E</span></div>
+</div>
+
+</div>

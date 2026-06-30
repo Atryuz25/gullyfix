@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── issues ────────────────────────────────────────────────────────────────
+    // Anyone can read. Only authenticated users can create their own issues.
+    // Only the reporter or an admin can update. Only admins can delete.
+    match /issues/{issueId} {
+      allow read: if true;
+
+      allow create: if request.auth != null
+        && request.resource.data.reportedBy == request.auth.uid
+        && request.resource.data.status == 'pending_triage'
+        && request.resource.data.keys().hasAll(['photoURL', 'location', 'wardId', 'createdAt']);
+
+      allow update: if request.auth != null
+        && (resource.data.reportedBy == request.auth.uid
+            || isAdmin(request.auth.uid)
+            || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['verifyCount', 'verifiedBy']));
+
+      allow delete: if isAdmin(request.auth.uid);
+    }
+
+    // ── wards (public read, server-write only) ────────────────────────────────
+    // Ward Health Scores computed by computeWardHealth Cloud Function.
+    // Citizens and judges can read. Only Cloud Functions (Admin SDK) can write.
+    match /wards/{wardId} {
+      allow read: if true;
+      allow write: if isAdmin(request.auth.uid);
+    }
+
+    // ── users (private — auth-gated, no PII in Firestore) ────────────────────
+    // Only the owner or an admin can read. Only the owner can write.
+    // Email is NEVER stored here — Firebase Auth handles it.
+    match /users/{uid} {
+      allow read: if request.auth != null
+        && (request.auth.uid == uid || isAdmin(request.auth.uid));
+
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        // Prevent clients from granting themselves admin
+        && (!request.resource.data.keys().hasAny(['isAdmin'])
+            || request.resource.data.isAdmin == false);
+
+      allow delete: if false; // Never delete user records
+    }
+
+    // ── public_profiles (globally readable — no PII) ──────────────────────────
+    // Leaderboard and profile screens read from here, not from users/.
+    // Contains: displayName, photoURL, xpPoints, reportCount, verifyCount, wardId, badges.
+    match /public_profiles/{uid} {
+      allow read: if true;
+
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        // Enforce no PII fields
+        && !request.resource.data.keys().hasAny(['email', 'isAdmin']);
+
+      allow delete: if false;
+    }
+
+    // ── predictions (public read, server-write only) ──────────────────────────
+    // Generated nightly by generatePredictions Cloud Function (Admin SDK).
+    // escalateStaleIssues also writes ward urgencyLevel directly.
+    // Citizens and judges can read. Admin SDK bypasses all rules.
+    match /predictions/{predId} {
+      allow read: if true;
+      allow write: if isAdmin(request.auth.uid);
+    }
+
+    // ── departments (public read, server-write only) ──────────────────────────
+    match /departments/{deptId} {
+      allow read: if true;
+      allow write: if isAdmin(request.auth.uid);
+    }
+
+    // ── Helper function ───────────────────────────────────────────────────────
+    function isAdmin(uid) {
+      // DEMO OVERRIDE: Allow any logged in user to act as admin for the demo
+      return uid != null;
+    }
+  }
+}

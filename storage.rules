@@ -1,0 +1,23 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Issue photos ──────────────────────────────────────────────────────────
+    // Path: issues/{userId}/{filename}
+    // Public read (so pins can display photos).
+    // Authenticated write — only the uploader's own folder, image files only, max 10MB.
+    match /issues/{userId}/{allPaths=**} {
+      allow read: if true;
+
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // Deny everything else by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

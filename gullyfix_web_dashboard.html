@@ -1,0 +1,402 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{background:#F5F5F5;font-family:var(--font-sans);border-radius:12px;overflow:hidden;min-height:660px;display:flex;flex-direction:column}
+.topbar{background:#fff;border-bottom:1px solid #EBEBEB;height:56px;display:flex;align-items:center;padding:0 24px;gap:24px;justify-content:space-between;flex-shrink:0}
+.logo{font-size:18px;font-weight:700;letter-spacing:-0.03em;color:#111}
+.logo span{color:#FF5B23}
+.nav-links{display:flex;gap:4px}
+.nl{font-size:13px;font-weight:500;padding:6px 12px;border-radius:8px;color:#666;cursor:pointer}
+.nl.active{background:#FFF2ED;color:#FF5B23}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.ward-sel{background:#F5F5F5;border:1px solid #EBEBEB;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:500;color:#111;display:flex;align-items:center;gap:6px;cursor:pointer}
+.ward-sel i{font-size:13px;color:#FF5B23}
+.report-btn{background:#FF5B23;color:#fff;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;border:none}
+.report-btn i{font-size:14px}
+.avatar{width:32px;height:32px;border-radius:50%;background:#FFE5D9;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#FF5B23}
+.main{display:grid;grid-template-columns:320px 1fr 280px;flex:1;overflow:hidden}
+.left-panel{background:#fff;border-right:1px solid #EBEBEB;overflow-y:auto;display:flex;flex-direction:column}
+.lp-section{padding:16px;border-bottom:1px solid #F0F0F0}
+.lp-label{font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#999;margin-bottom:10px}
+.health-score-row{display:flex;align-items:center;gap:14px}
+.hs-ring{position:relative;flex-shrink:0}
+.hs-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.hs-num{font-size:20px;font-weight:700;color:#FF5B23;line-height:1;letter-spacing:-0.03em}
+.hs-of{font-size:9px;color:#999;font-weight:500}
+.hs-info{}
+.hs-title{font-size:14px;font-weight:600;color:#111;letter-spacing:-0.01em}
+.hs-sub{font-size:12px;color:#888;margin-top:2px}
+.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.ms{background:#F9F9F9;border-radius:10px;padding:10px}
+.ms-val{font-size:16px;font-weight:700;color:#111;letter-spacing:-0.02em}
+.ms-val.red{color:#FF3B30}
+.ms-val.green{color:#34C759}
+.ms-val.orange{color:#FF5B23}
+.ms-lbl{font-size:10px;color:#999;font-weight:500;margin-top:2px}
+.acc-block{background:#111;border-radius:12px;padding:14px;margin-top:0}
+.acc-eyebrow{font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#555;margin-bottom:6px}
+.acc-row{display:flex;align-items:flex-end;justify-content:space-between}
+.acc-num{font-size:28px;font-weight:700;color:#FF5B23;letter-spacing:-0.04em;line-height:1}
+.acc-bars{display:flex;gap:3px;align-items:flex-end;height:36px}
+.ab{width:9px;border-radius:2px 2px 0 0}
+.acc-change{font-size:11px;color:#FF3B30;margin-top:4px;display:flex;align-items:center;gap:3px}
+.acc-change i{font-size:11px}
+.ai-banner{background:#F0FFF5;border:1px solid #C3EDD3;border-radius:10px;padding:10px 12px;display:flex;gap:8px;margin-top:0}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:#34C759;flex-shrink:0;margin-top:4px}
+.ai-text{font-size:12px;color:#1A6630;line-height:1.5}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter-chip{font-size:12px;font-weight:500;padding:5px 10px;border-radius:8px;background:#F5F5F5;color:#666;cursor:pointer;border:1px solid transparent}
+.filter-chip.on{background:#FFF2ED;color:#FF5B23;border-color:#FFD5C2}
+.issue-list{display:flex;flex-direction:column}
+.issue-row{padding:12px 16px;border-bottom:1px solid #F5F5F5;cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.issue-row:hover{background:#FAFAFA}
+.issue-row.active{background:#FFF8F5;border-left:3px solid #FF5B23}
+.issue-row.disputed{border-left:3px solid #FF3B30}
+.ii-icon{width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ii-icon.road{background:#FFF2ED}
+.ii-icon.road i{color:#FF5B23}
+.ii-icon.water{background:#EDF5FF}
+.ii-icon.water i{color:#007AFF}
+.ii-icon.light{background:#FFFBEC}
+.ii-icon.light i{color:#FF9F0A}
+.ii-icon.waste{background:#F0FFF5}
+.ii-icon.waste i{color:#34C759}
+.ii-icon i{font-size:18px}
+.ii-body{flex:1;min-width:0}
+.ii-title{font-size:13px;font-weight:600;color:#111;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ii-meta{font-size:11px;color:#999;margin-top:2px}
+.ii-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px}
+.t-disputed{background:#FFE5E5;color:#FF3B30}
+.t-pending{background:#FFF2ED;color:#FF5B23}
+.t-open{background:#F2F2F7;color:#888}
+.t-resolved{background:#E5F9EE;color:#34C759}
+.t-sla{background:#FFE5E5;color:#FF3B30}
+.ii-p{font-size:10px;font-weight:700;font-family:var(--font-mono);padding:2px 6px;border-radius:5px;margin-left:auto;flex-shrink:0}
+.p-high{background:#FFE5E5;color:#FF3B30}
+.p-med{background:#FFF3D6;color:#C07800}
+.p-low{background:#E5F9EE;color:#34C759}
+.map-area{background:#E8EDF2;position:relative;overflow:hidden}
+.map-svg{width:100%;height:100%}
+.map-controls{position:absolute;top:14px;left:14px;display:flex;gap:6px}
+.mc-btn{background:#fff;border:1px solid #EBEBEB;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;color:#444;cursor:pointer;display:flex;align-items:center;gap:5px}
+.mc-btn.on{background:#FFF2ED;border-color:#FFD5C2;color:#FF5B23}
+.mc-btn i{font-size:13px}
+.map-search{position:absolute;top:14px;right:14px;background:#fff;border:1px solid #EBEBEB;border-radius:8px;padding:7px 12px;font-size:12px;color:#999;width:180px;display:flex;align-items:center;gap:6px}
+.map-search i{font-size:14px;color:#ccc}
+.dispute-toast{position:absolute;bottom:14px;left:14px;right:14px;background:#fff;border-radius:12px;border:1px solid #EBEBEB;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.dt-icon{width:34px;height:34px;background:#FF3B30;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dt-icon i{font-size:16px;color:#fff}
+.dt-body{flex:1}
+.dt-title{font-size:13px;font-weight:600;color:#111}
+.dt-sub{font-size:11px;color:#888;margin-top:1px}
+.dt-btn{background:#FF3B30;color:#fff;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0}
+.right-panel{background:#fff;border-left:1px solid #EBEBEB;display:flex;flex-direction:column;overflow-y:auto}
+.rp-header{padding:16px;border-bottom:1px solid #F0F0F0}
+.rp-title{font-size:14px;font-weight:700;color:#111;letter-spacing:-0.01em}
+.rp-sub{font-size:12px;color:#888;margin-top:2px}
+.trace-card{margin:12px;background:#111;border-radius:12px;padding:14px}
+.trace-label{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#555;margin-bottom:8px}
+.trace-line{font-size:11px;color:#888;font-family:var(--font-mono);line-height:2;display:flex;align-items:center;gap:6px}
+.trace-line.done{color:#34C759}
+.trace-line.warn{color:#FF9F0A}
+.trace-line.err{color:#FF3B30}
+.trace-cursor{display:inline-block;width:6px;height:12px;background:#FF5B23;border-radius:1px;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.timeline{padding:12px 16px}
+.tl-item{display:flex;gap:10px;padding-bottom:14px;position:relative}
+.tl-item:not(:last-child)::after{content:'';position:absolute;left:11px;top:24px;bottom:0;width:1px;background:#EBEBEB}
+.tl-dot{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;z-index:1}
+.tl-dot.done{background:#E5F9EE;color:#34C759}
+.tl-dot.active{background:#FFF2ED;color:#FF5B23;border:2px solid #FF5B23}
+.tl-dot.wait{background:#F5F5F5;color:#ccc}
+.tl-body{}
+.tl-name{font-size:12px;font-weight:600;color:#111}
+.tl-time{font-size:11px;color:#999;margin-top:1px}
+.dispute-panel{margin:0 12px 12px;background:#FFF5F5;border:1px solid #FFD0D0;border-radius:12px;padding:14px}
+.dp-title{font-size:13px;font-weight:700;color:#FF3B30;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.dp-title i{font-size:14px}
+.dp-body{font-size:12px;color:#444;line-height:1.6}
+.dp-analysis{background:#fff;border-radius:8px;padding:10px;margin-top:8px;font-size:11px;color:#666;line-height:1.6;font-family:var(--font-mono)}
+.dp-analysis b{color:#FF3B30;font-family:var(--font-sans);font-size:12px}
+.community-row{padding:12px 16px;border-top:1px solid #F0F0F0}
+.cr-label{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#999;margin-bottom:8px}
+.verify-btn{width:100%;background:#F5F5F5;border:1px solid #EBEBEB;border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;color:#444}
+.verify-btn i{font-size:16px;color:#FF5B23}
+.verify-count-badge{margin-left:auto;background:#FFF2ED;color:#FF5B23;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px}
+</style>
+
+<h2 class="sr-only">GullyFix web application dashboard with left panel showing ward health and issue list, center map view, and right panel showing AI trace and issue detail</h2>
+
+<div class="app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:28px">
+      <div class="logo">Gully<span>Fix</span></div>
+      <div class="nav-links">
+        <div class="nl active">Dashboard</div>
+        <div class="nl">Map</div>
+        <div class="nl">Leaderboard</div>
+        <div class="nl">Ledger</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="ward-sel"><i class="ti ti-map-pin" aria-hidden="true"></i> Ward 42 · Jubilee Hills <i class="ti ti-chevron-down" style="font-size:11px;color:#999" aria-hidden="true"></i></div>
+      <div class="report-btn"><i class="ti ti-camera" aria-hidden="true"></i> Report issue</div>
+      <div class="avatar">AT</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="left-panel">
+      <div class="lp-section">
+        <div class="lp-label">Ward health</div>
+        <div class="health-score-row">
+          <div class="hs-ring">
+            <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="26" fill="none" stroke="#F0F0F0" stroke-width="5"/>
+              <circle cx="32" cy="32" r="26" fill="none" stroke="#FF5B23" stroke-width="5" stroke-dasharray="163.4" stroke-dashoffset="63.7" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+            </svg>
+            <div class="hs-inner">
+              <span class="hs-num">61</span>
+              <span class="hs-of">/100</span>
+            </div>
+          </div>
+          <div class="hs-info">
+            <div class="hs-title">Amber zone</div>
+            <div class="hs-sub">Below city avg of 74</div>
+            <div class="mini-stats">
+              <div class="ms"><div class="ms-val red">18</div><div class="ms-lbl">Open</div></div>
+              <div class="ms"><div class="ms-val green">6.2d</div><div class="ms-lbl">Avg fix</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lp-section">
+        <div class="acc-block">
+          <div class="acc-eyebrow">Accountability index</div>
+          <div class="acc-row">
+            <div>
+              <div class="acc-num">78%</div>
+              <div class="acc-change"><i class="ti ti-trending-down" aria-hidden="true"></i> Down 6pts · 2 fake closures</div>
+            </div>
+            <div class="acc-bars">
+              <div class="ab" style="height:14px;background:#333"></div>
+              <div class="ab" style="height:22px;background:#333"></div>
+              <div class="ab" style="height:30px;background:#444"></div>
+              <div class="ab" style="height:24px;background:#444"></div>
+              <div class="ab" style="height:18px;background:#333"></div>
+              <div class="ab" style="height:12px;background:#FF5B23"></div>
+              <div class="ab" style="height:8px;background:#FF3B30"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lp-section">
+        <div class="ai-banner">
+          <div class="ai-dot"></div>
+          <div class="ai-text">Gemini detected recurring water leaks in Sector 4. Systemic pipe failure predicted in 14 days.</div>
+        </div>
+      </div>
+
+      <div class="lp-section">
+        <div class="lp-label">Filter</div>
+        <div class="filters">
+          <div class="filter-chip on">All</div>
+          <div class="filter-chip">Roads</div>
+          <div class="filter-chip">Water</div>
+          <div class="filter-chip">Lights</div>
+          <div class="filter-chip">Waste</div>
+        </div>
+      </div>
+
+      <div class="issue-list">
+        <div class="issue-row disputed active">
+          <div class="ii-icon road"><i class="ti ti-road" aria-hidden="true"></i></div>
+          <div class="ii-body">
+            <div class="ii-title">Pothole · Kukatpally Main Rd</div>
+            <div class="ii-meta">GHMC Roads · 3 days ago · 200m</div>
+            <div class="ii-tags">
+              <span class="tag t-disputed">Disputed</span>
+              <span class="tag t-sla">SLA day 9</span>
+            </div>
+          </div>
+          <span class="ii-p p-high">P78</span>
+        </div>
+
+        <div class="issue-row">
+          <div class="ii-icon water"><i class="ti ti-droplet" aria-hidden="true"></i></div>
+          <div class="ii-body">
+            <div class="ii-title">Water leakage · Sector 4</div>
+            <div class="ii-meta">HMWSSB · 1 day ago · 450m</div>
+            <div class="ii-tags">
+              <span class="tag t-pending">Pending verification</span>
+            </div>
+          </div>
+          <span class="ii-p p-high">P91</span>
+        </div>
+
+        <div class="issue-row">
+          <div class="ii-icon light"><i class="ti ti-bulb" aria-hidden="true"></i></div>
+          <div class="ii-body">
+            <div class="ii-title">Broken streetlight · MG Rd</div>
+            <div class="ii-meta">TSSPDCL · 5 hours ago · 80m</div>
+            <div class="ii-tags">
+              <span class="tag t-open">Open</span>
+            </div>
+          </div>
+          <span class="ii-p p-med">P54</span>
+        </div>
+
+        <div class="issue-row">
+          <div class="ii-icon waste"><i class="ti ti-trash" aria-hidden="true"></i></div>
+          <div class="ii-body">
+            <div class="ii-title">Garbage overflow · Hill St</div>
+            <div class="ii-meta">GHMC Sanitation · 2 days ago · 1.1km</div>
+            <div class="ii-tags">
+              <span class="tag t-resolved">Verified resolved</span>
+            </div>
+          </div>
+          <span class="ii-p p-low">P33</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-area">
+      <svg class="map-svg" viewBox="0 0 560 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="560" height="600" fill="#E8EDF2"/>
+        <rect x="0" y="0" width="560" height="600" fill="#EEF2F6"/>
+        <rect x="60" y="180" width="280" height="10" rx="5" fill="#D8DFE8"/>
+        <rect x="40" y="340" width="340" height="10" rx="5" fill="#D8DFE8"/>
+        <rect x="100" y="80" width="200" height="10" rx="5" fill="#D8DFE8"/>
+        <rect x="280" y="100" width="10" height="160" rx="5" fill="#D8DFE8"/>
+        <rect x="160" y="60" width="10" height="280" rx="5" fill="#D8DFE8"/>
+        <rect x="400" y="120" width="10" height="200" rx="5" fill="#D8DFE8"/>
+        <rect x="90" y="220" width="60" height="80" rx="4" fill="#D4DBE5"/>
+        <rect x="200" y="200" width="70" height="60" rx="4" fill="#D4DBE5"/>
+        <rect x="310" y="160" width="80" height="90" rx="4" fill="#D4DBE5"/>
+        <rect x="420" y="200" width="60" height="70" rx="4" fill="#D4DBE5"/>
+        <rect x="90" y="380" width="90" height="70" rx="4" fill="#D4DBE5"/>
+        <rect x="300" y="380" width="100" height="60" rx="4" fill="#D4DBE5"/>
+        <circle cx="200" cy="240" r="48" fill="#FF3B30" fill-opacity="0.08"/>
+        <circle cx="200" cy="240" r="28" fill="#FF3B30" fill-opacity="0.12"/>
+        <circle cx="340" cy="340" r="36" fill="#FF9F0A" fill-opacity="0.1"/>
+        <circle cx="340" cy="340" r="20" fill="#FF9F0A" fill-opacity="0.15"/>
+        <text x="75" y="348" font-size="10" fill="#B0BBC8" font-family="var(--font-sans)" font-weight="500">Kukatpally Main Rd</text>
+        <text x="115" y="188" font-size="10" fill="#B0BBC8" font-family="var(--font-sans)" font-weight="500">MG Road</text>
+        <text x="105" y="96" font-size="10" fill="#B0BBC8" font-family="var(--font-sans)" font-weight="500">Sector 4</text>
+      </svg>
+
+      <svg style="position:absolute;top:220px;left:188px" width="24" height="32" viewBox="0 0 24 32" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" fill="#FF3B30" stroke="#fff" stroke-width="2"/>
+        <circle cx="12" cy="12" r="5" fill="#fff"/>
+        <polygon points="12,26 6,18 18,18" fill="#FF3B30"/>
+        <circle cx="12" cy="12" r="14" fill="#FF3B30" fill-opacity="0.15">
+          <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="fill-opacity" values="0.15;0;0.15" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+
+      <svg style="position:absolute;top:326px;left:328px" width="20" height="28" viewBox="0 0 20 28" aria-hidden="true">
+        <circle cx="10" cy="10" r="8" fill="#FF9F0A" stroke="#fff" stroke-width="2"/>
+        <circle cx="10" cy="10" r="4" fill="#fff"/>
+        <polygon points="10,22 5,14 15,14" fill="#FF9F0A"/>
+      </svg>
+
+      <svg style="position:absolute;top:180px;left=370px;left:370px" width="16" height="22" viewBox="0 0 16 22" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" fill="#34C759" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="8" cy="8" r="3" fill="#fff"/>
+        <polygon points="8,18 4,12 12,12" fill="#34C759"/>
+      </svg>
+
+      <div class="map-controls">
+        <div class="mc-btn on"><i class="ti ti-map-pin" aria-hidden="true"></i> Pins</div>
+        <div class="mc-btn"><i class="ti ti-flame" aria-hidden="true"></i> Heatmap</div>
+        <div class="mc-btn" style="color:#FF3B30;border-color:#FFD0D0;background:#FFF5F5"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Disputed <span style="background:#FF3B30;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:2px">2</span></div>
+        <div class="mc-btn"><i class="ti ti-activity" aria-hidden="true"></i> Risk horizon</div>
+      </div>
+
+      <div class="map-search">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        Search location...
+      </div>
+
+      <div class="dispute-toast">
+        <div class="dt-icon"><i class="ti ti-alert-triangle" aria-hidden="true"></i></div>
+        <div class="dt-body">
+          <div class="dt-title">Ghost resolution detected · Pothole on Kukatpally Main Rd</div>
+          <div class="dt-sub">5 citizens say it's still broken. AI confirms damage persists.</div>
+        </div>
+        <div class="dt-btn">View dispute</div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="rp-header">
+        <div class="rp-title">Pothole · Kukatpally Main Rd</div>
+        <div class="rp-sub">GHMC Roads · Ward 42 · 3 days ago</div>
+      </div>
+
+      <div style="padding:12px">
+        <div style="background:#F5F5F5;border-radius:10px;height:120px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:12px;border:1px dashed #DDD">
+          <i class="ti ti-photo" style="font-size:28px;color:#DDD" aria-hidden="true"></i>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <span class="tag t-disputed" style="font-size:11px;padding:3px 8px">Disputed resolution</span>
+          <span class="tag p-high" style="font-size:11px;padding:3px 8px;background:#FFE5E5;color:#FF3B30">Priority 78</span>
+        </div>
+      </div>
+
+      <div style="padding:0 12px 12px">
+        <div class="trace-card">
+          <div class="trace-label">AI trace</div>
+          <div class="trace-line done"><i class="ti ti-check" style="font-size:11px" aria-hidden="true"></i> Image scanned — pothole confirmed</div>
+          <div class="trace-line done"><i class="ti ti-check" style="font-size:11px" aria-hidden="true"></i> Routed → GHMC Roads Div.</div>
+          <div class="trace-line done"><i class="ti ti-check" style="font-size:11px" aria-hidden="true"></i> Admin marked resolved</div>
+          <div class="trace-line err"><i class="ti ti-x" style="font-size:11px" aria-hidden="true"></i> 5 citizens disputed</div>
+          <div class="trace-line warn"><i class="ti ti-loader" style="font-size:11px" aria-hidden="true"></i> Comparing photos... <span class="trace-cursor"></span></div>
+        </div>
+      </div>
+
+      <div class="dispute-panel">
+        <div class="dp-title"><i class="ti ti-shield-x" aria-hidden="true"></i> Resolution rejected</div>
+        <div class="dp-body">Admin uploaded a resolution photo on Day 3. AI 3-way comparison with original report and citizen dispute photo:</div>
+        <div class="dp-analysis"><b>Damage pattern still visible.</b> Crack depth and surface area unchanged from original report. Resolution claim rejected. Escalated to AEE Ward 42.</div>
+      </div>
+
+      <div class="timeline">
+        <div class="lp-label" style="margin-bottom:10px">Issue timeline</div>
+        <div class="tl-item">
+          <div class="tl-dot done"><i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i></div>
+          <div class="tl-body"><div class="tl-name">Reported</div><div class="tl-time">3 days ago · 9:14 AM</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot done"><i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i></div>
+          <div class="tl-body"><div class="tl-name">AI triaged · P78</div><div class="tl-time">3 days ago · 9:14 AM</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot done"><i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i></div>
+          <div class="tl-body"><div class="tl-name">Assigned to GHMC</div><div class="tl-time">2 days ago</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot active"><i class="ti ti-alert-triangle" style="font-size:10px" aria-hidden="true"></i></div>
+          <div class="tl-body"><div class="tl-name" style="color:#FF3B30">Resolution disputed</div><div class="tl-time">Today · Escalated to AEE</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot wait"><i class="ti ti-clock" style="font-size:10px" aria-hidden="true"></i></div>
+          <div class="tl-body"><div class="tl-name" style="color:#ccc">Verified resolved</div><div class="tl-time">Pending</div></div>
+        </div>
+      </div>
+
+      <div class="community-row">
+        <div class="cr-label">Community</div>
+        <div class="verify-btn">
+          <i class="ti ti-eye" aria-hidden="true"></i>
+          I've seen this issue too
+          <span class="verify-count-badge">5 confirmed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
