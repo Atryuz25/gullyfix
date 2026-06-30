@@ -402,7 +402,7 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
         </motion.div>
 
         {/* Actions */}
-        <motion.div style={{ display: "flex", gap: "10px", paddingBottom: "80px" }} variants={staggerItem}>
+        <motion.div style={{ display: "flex", gap: "10px", paddingBottom: "80px", flexWrap: "wrap" }} variants={staggerItem}>
           <button
             className="btn btn-secondary btn-sm"
             style={{ flex: 1 }}
@@ -417,6 +417,27 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
           >
             <i className="ti ti-flag" /> Flag as invalid
           </button>
+          
+          {isOwner && (
+            <button
+              className="btn btn-ghost btn-sm"
+              style={{ color: "var(--red)", flex: 1, minWidth: "100%" }}
+              onClick={async () => {
+                if (confirm("Are you sure you want to delete this report?")) {
+                  try {
+                    const { doc, deleteDoc } = await import("firebase/firestore");
+                    await deleteDoc(doc(db, "issues", issue.id));
+                    showToast({ type: "success", message: "Report deleted." });
+                    router.push("/profile");
+                  } catch (e: any) {
+                    showToast({ type: "error", message: "Failed to delete report." });
+                  }
+                }
+              }}
+            >
+              <i className="ti ti-trash" /> Delete Report
+            </button>
+          )}
         </motion.div>
 
         {/* Flag Modal */}
