@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-export const maxDuration = 60;
-import { adminDb } from "@/lib/firebase-admin";
+export const runtime = "edge";
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { haversineMeters, latLngBoundingBox } from "@/lib/geo";
 import { sanitizeText } from "@/lib/sanitize";
-import { FieldValue, Timestamp, GeoPoint } from "firebase-admin/firestore";
 import { getEquityMultiplier } from '@/lib/ward-equity';
 import { CorridorResult, CORRIDOR_TYPES, getCorridorLabel } from '@/lib/corridor';
 
