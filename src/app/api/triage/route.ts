@@ -59,36 +59,9 @@ async function runCloudVision(photoURL: string): Promise<string[]> {
   }
 }
 
-async function getProximateIssues(lat: number, lng: number, excludeId: string) {
-  const box = latLngBoundingBox(lat, lng, 1);
 
-  const snap = await adminDb
-    .collection("issues")
-    .where("status", "in", ["open", "in_progress"])
-    .where("location", ">=", new GeoPoint(box.minLat, box.minLng))
-    .where("location", "<=", new GeoPoint(box.maxLat, box.maxLng))
-    .orderBy("location")
-    .orderBy("createdAt", "desc")
-    .limit(20)
-    .get();
 
-  const results = [];
-  for (const doc of snap.docs) {
-    if (doc.id === excludeId) continue;
-    const d = doc.data();
-    const dist = haversineMeters(lat, lng, d.location.latitude, d.location.longitude);
-    if (dist > 1000) continue;
-    results.push({
-      id: doc.id,
-      category: d.category,
-      priorityScore: d.priorityScore ?? 50,
-      distanceMeters: Math.round(dist),
-      verifyCount: d.verifyCount ?? 0,
-    });
-  }
-
-  return results.sort((a, b) => a.distanceMeters - b.distanceMeters).slice(0, 5);
-}
+import { Buffer } from "node:buffer";
 
 async function runGeminiAgent(photoURL: string, userDescription: string, visionLabels: string[], nearbyIssues: any[], userReportedType: string | null) {
   if (!GEMINI_API_KEY) throw new Error("No Gemini API key");
@@ -150,14 +123,9 @@ Return ONLY valid JSON. No markdown. No text outside the JSON object:
   try {
     const imgRes = await fetch(photoURL);
     const buf = await imgRes.arrayBuffer();
-    const bytes = new Uint8Array(buf);
-    let binary = '';
-    for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
     imagePart = {
       inlineData: {
-        data: btoa(binary),
+        data: Buffer.from(buf).toString("base64"),
         mimeType: imgRes.headers.get("content-type") || "image/jpeg",
       },
     };
