@@ -434,12 +434,19 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
               onClick={async () => {
                 if (confirm("Are you sure you want to delete this report?")) {
                   try {
-                    const { doc, deleteDoc } = await import("firebase/firestore");
-                    await deleteDoc(doc(db, "issues", issue.id));
+                    const res = await fetch("/api/delete-issue", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ userId: user?.uid, issueId: issue.id })
+                    });
+                    if (!res.ok) {
+                      const errorData = await res.json();
+                      throw new Error(errorData.error || "Failed to delete report.");
+                    }
                     showToast({ type: "success", message: "Report deleted." });
                     router.push("/profile");
                   } catch (e: any) {
-                    showToast({ type: "error", message: "Failed to delete report." });
+                    showToast({ type: "error", message: e.message || "Failed to delete report." });
                   }
                 }
               }}
