@@ -52,7 +52,7 @@ npm run dev
 
 ## Deployment
 
-**Live demo:** [INSERT VERCEL URL HERE]
+**Live demo:** [https://gullyfixx.vercel.app](https://gullyfixx.vercel.app)
 
 ### Why Vercel?
 While our entire backend infrastructure (Database, Authentication, Gemini AI, Cloud Vision, and Mapping) is natively built on **Google Cloud Services**, the Next.js frontend is deployed to **Vercel** rather than Google Cloud Run. 
