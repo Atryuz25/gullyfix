@@ -11,6 +11,7 @@ export async function POST(req: Request) {
     }
 
     const userRef = adminDb.collection("users").doc(userId);
+    const profileRef = adminDb.collection("public_profiles").doc(userId);
     
     let xpAward = amount || 0;
     if (action === "report_issue") xpAward = 20;
@@ -21,6 +22,15 @@ export async function POST(req: Request) {
       await userRef.set({
         xpPoints: FieldValue.increment(xpAward),
       }, { merge: true });
+      
+      const profileUpdates: any = { xpPoints: FieldValue.increment(xpAward) };
+      if (action === "verify_issue") {
+        profileUpdates.verifyCount = FieldValue.increment(1);
+      } else if (action === "report_issue") {
+        profileUpdates.reportsCount = FieldValue.increment(1);
+      }
+      
+      await profileRef.set(profileUpdates, { merge: true });
       
       // Basic badge logic
       const snap = await userRef.get();

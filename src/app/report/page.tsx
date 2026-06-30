@@ -181,6 +181,20 @@ export default function ReportPage() {
         resolvedAt: null,
       });
 
+      // Instantly award XP and increment reports count for the user
+      const { doc, updateDoc, increment } = await import("firebase/firestore");
+      const profileRef = doc(db, "public_profiles", user.uid);
+      await updateDoc(profileRef, {
+        xpPoints: increment(20),
+        reportsCount: increment(1)
+      }).catch(err => console.error("Failed to update profile XP:", err));
+      
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        xpPoints: increment(20),
+        reportsCount: increment(1)
+      }).catch(err => console.error("Failed to update user XP:", err));
+
       // Trigger background AI triage
       fetch("/api/triage", {
         method: "POST",
