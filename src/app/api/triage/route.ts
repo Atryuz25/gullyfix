@@ -150,9 +150,14 @@ Return ONLY valid JSON. No markdown. No text outside the JSON object:
   try {
     const imgRes = await fetch(photoURL);
     const buf = await imgRes.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
     imagePart = {
       inlineData: {
-        data: Buffer.from(buf).toString("base64"),
+        data: btoa(binary),
         mimeType: imgRes.headers.get("content-type") || "image/jpeg",
       },
     };
@@ -211,7 +216,7 @@ export async function POST(req: Request) {
         agent = await runGeminiAgent(photoURL, userDescription, visionLabels, nearbyIssues, userReportedType);
       } catch (err: any) {
         console.error("[TRIAGE_CRITICAL_FAIL]", err);
-        agent = { ...TRIAGE_FALLBACK, aiReasoning: "Automatic triage temporarily unavailable due to network load. Issue queued for manual review." };
+        agent = { ...TRIAGE_FALLBACK, aiReasoning: "Automatic triage failed: " + err.message };
       }
     }
 
