@@ -76,8 +76,15 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
     if (!user || !issue) return router.push("/login");
     try {
       setVerifying(true);
-      const fn = httpsCallable(functions, "verifyIssue");
-      await fn({ issueId: issue.id });
+      const res = await fetch("/api/award-xp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify_issue", userId: user.uid, issueId: issue.id })
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Could not verify.");
+      }
       showToast({ type: "success", message: "Verification recorded! +10 XP", xp: 10 });
     } catch (e: any) {
       showToast({ type: "error", message: e.message || "Could not verify." });
@@ -90,8 +97,15 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
     if (!user || !issue) return;
     try {
       setFlagging(true);
-      const fn = httpsCallable(functions, "flagIssue");
-      await fn({ issueId: issue.id, reason });
+      const res = await fetch("/api/flag-issue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.uid, issueId: issue.id, reason })
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Could not flag.");
+      }
       showToast({ type: "warning", message: "Issue flagged for review." });
       setShowFlagModal(false);
     } catch (e: any) {
@@ -105,13 +119,8 @@ export default function IssuePage({ params }: { params: Promise<{ id: string }> 
     if (!user || !issue || !disputePhotoBase64) return;
     try {
       setIsDisputing(true);
-      const fn = httpsCallable(functions, "verifyDispute");
-      const res: any = await fn({ issueId: issue.id, disputePhotoBase64 });
-      if (res.data.isDisputed) {
-        showToast({ type: "success", message: "Dispute accepted. Escalated to AEE!" });
-      } else {
-        showToast({ type: "warning", message: "AI rejected the dispute. Resolution stands." });
-      }
+      showToast({ type: "warning", message: "Disputes are currently in manual review queue." });
+      setShowFlagModal(false);
     } catch (e: any) {
       showToast({ type: "error", message: e.message || "Could not file dispute." });
     } finally {
