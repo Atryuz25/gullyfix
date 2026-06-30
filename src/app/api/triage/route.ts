@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+export const maxDuration = 60;
 import { adminDb } from "@/lib/firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { haversineMeters, latLngBoundingBox } from "@/lib/geo";
